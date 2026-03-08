@@ -14,12 +14,12 @@ class Signup(Resource):
 
         try:
             user = User(
-                username=data["username"],
+                username=data.get("username"),
                 image_url=data.get("image_url"),
                 bio=data.get("bio")
             )
 
-            user.password_hash = data["password"]
+            user.password_hash = data.get("password")
 
             db.session.add(user)
             db.session.commit()
@@ -28,7 +28,7 @@ class Signup(Resource):
 
             return user.to_dict(only=("id", "username", "image_url", "bio")), 201
 
-        except (IntegrityError, ValueError) as e:
+        except Exception as e:
             db.session.rollback()
             return {"errors": [str(e)]}, 422
 
